@@ -52,6 +52,17 @@ export class UserService {
       })
     );
   }
+  getClients(): Observable<User[]> {
+    return this.http.get<User[]>(`${this.apiUrl}/clients`).pipe(
+      tap(response => {
+        console.log('clients Response:', response);
+      }),
+      catchError(error => {
+        console.error('Error fetching admins:', error);
+        return of([]); // Return an empty array if there's an error
+      })
+    );
+  }
 
   // Fetch and update the list of admins
   fetchAndUpdateAdmins(): void {

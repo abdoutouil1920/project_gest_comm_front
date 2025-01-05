@@ -4,4 +4,5 @@ username: any;
   name: string;
   email: string;
   role: string;
+  motDePasse:string;
 }

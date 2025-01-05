@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-import { UserService } from '../../services/user.service'; // Import UserService
-import { CommonModule } from '@angular/common'; // Import CommonModule
-import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
+import { HttpClientModule } from '@angular/common/http';
+import { UserService } from '../../services/user.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [HttpClientModule, CommonModule, FormsModule], // Include FormsModule
-  providers: [UserService], // Include HttpClientModule
+  imports: [HttpClientModule, CommonModule, FormsModule],
+  providers: [UserService],
   template: `
     <div class="users-container p-6">
       <h2 class="text-2xl font-semibold mb-4">User Management</h2>
@@ -57,8 +57,8 @@ import { FormsModule } from '@angular/forms'; // Import FormsModule for ngModel
             <input id="email" [(ngModel)]="editedUser.email" name="email" class="p-2 border border-gray-300 rounded-md" required />
           </div>
           <div class="mt-4">
-            <label for="role" class="block">Role:</label>
-            <input id="role" [(ngModel)]="editedUser.role" name="role" class="p-2 border border-gray-300 rounded-md" required />
+            <label for="role" class="block">Password:</label>
+            <input type="password" id="motDePasse" [(ngModel)]="editedUser.motDePasse" name="motDePasse" class="p-2 border border-gray-300 rounded-md" required />
           </div>
           <div class="mt-6">
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-md">Save Changes</button>
@@ -98,12 +98,21 @@ export class UsersComponent implements OnInit {
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    this.userService.getUsers().subscribe(users => {
+    this.userService.getClients().subscribe(users => {
       this.users = users;
     });
   }
 
-  openUserDialog() {}
+  openUserDialog() {
+    // Reset the form for a new user with the role set to 'client'
+    this.editedUser = {
+      username: '',
+      email: '',
+      role: 'client', // Set the default role to 'client'
+      motDePasse: '' // Password field, should be handled in the form
+    };
+    this.isEditModalOpen = true; // Open the modal
+  }
 
   editUser(user: any) {
     this.editedUser = { ...user }; // Copy user data to editedUser
@@ -122,6 +131,12 @@ export class UsersComponent implements OnInit {
         if (index !== -1) {
           this.users[index] = updatedUser;
         }
+        this.closeEditModal(); // Close the modal after saving
+      });
+    } else {
+      // Handle creating a new user (send the editedUser with role 'client')
+      this.userService.createUser(this.editedUser).subscribe(newUser => {
+        this.users.push(newUser); // Add new user to the list
         this.closeEditModal(); // Close the modal after saving
       });
     }

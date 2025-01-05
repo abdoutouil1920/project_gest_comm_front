@@ -23,14 +23,14 @@ export class ProductService {
   }
 
   // Create a new product
-  createProduct(product: Products): Observable<Products> {
+  createProduct(product: FormData): Observable<Products> {
     return this.http.post<Products>(this.apiUrl, product);
   }
-
-  // Update an existing product
-  updateProduct(id: number, product: Products): Observable<Products> {
+  
+  updateProduct(id: number, product: FormData): Observable<Products> {
     return this.http.put<Products>(`${this.apiUrl}/${id}`, product);
   }
+  
 
   // Delete a product
   deleteProduct(id: number): Observable<void> {
